@@ -4,10 +4,13 @@ pipeline {
         stage('Install Puppet Agent') {
             steps {
                 script {
-                    // Start an SSH agent
-                    sshagent(credentials: ['debatra_rsa']) {
-                        // Run the SSH command on the master server
-                        sh 'sudo apt install puppet -y'
+                    withCredentials([sshUserPrivateKey(credentialsId: 'debatra_rsa', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
+                        sh '''
+                            mkdir -p ~/.ssh
+                            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+                            chmod 600 ~/.ssh/id_rsa
+                            sudo apt install puppet -y
+                        '''
                     }
                 }
             }
