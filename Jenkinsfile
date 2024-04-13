@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('Install Puppet Agent') {
             steps {
+                sh 'sudo apt remove puppet-agent -y'
                 sh 'sudo apt install puppet -y'
             }
         }
