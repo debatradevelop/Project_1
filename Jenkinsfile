@@ -4,8 +4,8 @@ pipeline {
         stage('Install Puppet Agent') {
             steps {
                 script {
-                    sshagent(credentials: ['debatra_rsa']) {
-                        sh 'ssh -i /var/lib/jenkins/.ssh/debatra_rsa edureka@172.31.6.107 "sudo apt install puppet -y"'
+                    withCredentials([sshUserPrivateKey(credentialsId: 'debatra_rsa', keyFileVariable: 'SSH_KEY')]) {
+                        sh 'ssh -i $SSH_KEY edureka@172.31.6.107 "sudo apt install puppet -y"'
                     }
                 }
             }
@@ -13,19 +13,19 @@ pipeline {
         stage('Push Ansible Configuration') {
             steps {
                 script {
-                    sshagent(credentials: ['debatra_rsa']) {
-                        sh 'ansible-playbook -i "172.31.6.107," playbook.yml'
+                    withCredentials([sshUserPrivateKey(credentialsId: 'debatra_rsa', keyFileVariable: 'SSH_KEY')]) {
+                        sh 'ssh -i $SSH_KEY edureka@172.31.6.107 "ansible-playbook -i \"172.31.6.107,\" playbook.yml"'
                     }
                 }
             }
         }
         stage('Build and Deploy PHP Docker Container') {
             steps {
-                git 'https://github.com/debatradevelop/Project_1.git'
                 script {
-                    sshagent(credentials: ['debatra_rsa']) {
-                        sh 'docker build -t your-php-app /home/edureka/project1/projCert/website/'
-                        sh 'docker run -d -p 8080:80 your-php-app'
+                    withCredentials([sshUserPrivateKey(credentialsId: 'debatra_rsa', keyFileVariable: 'SSH_KEY')]) {
+                        git 'https://github.com/debatradevelop/Project_1.git'
+                        sh 'ssh -i $SSH_KEY edureka@172.31.6.107 "docker build -t your-php-app /home/edureka/project1/projCert/website/"'
+                        sh 'ssh -i $SSH_KEY edureka@172.31.6.107 "docker run -d -p 8080:80 your-php-app"'
                     }
                 }
             }
@@ -34,8 +34,8 @@ pipeline {
     post {
         failure {
             script {
-                sshagent(credentials: ['debatra_rsa']) {
-                    sh 'ssh -i /var/lib/jenkins/.ssh/debatra_rsa edureka@172.31.6.107 "docker stop $(docker ps -q)"'
+                withCredentials([sshUserPrivateKey(credentialsId: 'debatra_rsa', keyFileVariable: 'SSH_KEY')]) {
+                    sh 'ssh -i $SSH_KEY edureka@172.31.6.107 "docker stop $(docker ps -q)"'
                 }
             }
         }
