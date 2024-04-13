@@ -15,7 +15,7 @@ pipeline {
             steps {
                 git 'https://github.com/debatradevelop/Project_1.git'
                 sh 'docker build -t your-php-app /home/edureka/project1/projCert/website/'
-                sh 'docker run -d -p 8080:80 your-php-app'
+                sh 'docker run -d -p 8085:80 your-php-app'
             }
         }
     }
