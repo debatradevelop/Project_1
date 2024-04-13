@@ -3,17 +3,7 @@ pipeline {
     stages {
         stage('Install Puppet Agent') {
             steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'debatra_rsa', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
-                        sh '''
-                            mkdir -p ~/.ssh
-                            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-                            chmod 600 ~/.ssh/id_rsa
-                            apt update
-                            apt install puppet -y
-                        '''
-                    }
-                }
+                sh 'sudo apt install puppet -y'
             }
         }
         stage('Push Ansible Configuration') {
@@ -31,7 +21,6 @@ pipeline {
     }
     post {
         failure {
-            // Perform actions on the master server in case of failure
             sh 'docker stop $(docker ps -q)'
         }
     }
