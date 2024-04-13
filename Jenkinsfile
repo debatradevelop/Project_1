@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Push Ansible Configuration') {
             steps {
-                sh 'ansible-playbook -i "localhost," playbook.yml'
+                sh 'ansible-playbook -i "localhost," ansible/playbook.yml'
             }
         }
         stage('Build and Deploy PHP Docker Container') {
