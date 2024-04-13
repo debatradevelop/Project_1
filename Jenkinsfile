@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Install Puppet Agent') {
             steps {
-                sh 'ssh user@172.31.6.107 "sudo apt install puppet -y"'
+                sh 'ssh edureka@172.31.6.107 "sudo apt install puppet -y"'
             }
         }
         stage('Push Ansible Configuration') {
@@ -21,7 +21,7 @@ pipeline {
     }
     post {
         failure {
-            sh 'ssh user@172.31.6.107 "docker stop $(docker ps -q)"'
+            sh 'ssh edureka@172.31.6.107 "docker stop $(docker ps -q)"'
         }
     }
 }
